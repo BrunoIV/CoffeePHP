@@ -198,7 +198,7 @@ class CommonQuery {
 		$cols = array_map(function($col) {
 			return $col->toString();
 		}, $this->columns);
-		return implode(', ', $col);
+		return implode(', ', $cols);
 	}
 
 	/**
