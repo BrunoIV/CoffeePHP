@@ -180,4 +180,24 @@ class Column {
 		                substr($value, strlen($value) - 1, 1) == "'");
     }
 
+	public function toString() {
+		$sql = '';
+
+		if(!$this->isLiteral()) {
+			if($this->getFunction() != null) {
+					$sql .= $this->getFunction() . '(' . $this->getName() . ')';
+			} else {
+				$sql .= $this->getName();
+			}
+		} else {
+				$sql .= $this->getName();
+		}
+
+		if($this->getAlias() != '') {
+			$sql .= ' AS ' . $this->getAlias();
+		}
+
+		return $sql;
+	}
+
 }
