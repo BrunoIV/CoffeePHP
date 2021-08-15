@@ -2,10 +2,12 @@
 
 namespace Core\Query;
 use \PDO;
+use \Core\Helpers\ArrayHelper;
 
 class SelectQuery extends \Core\Query\CommonQuery {
 
-	protected $limit = 0;
+	private $limit = 0;
+	private $order = [];
 
 	/**
 	 * Selecciona los atributos que recibe como parámetro.
@@ -86,8 +88,40 @@ class SelectQuery extends \Core\Query\CommonQuery {
 		return $limit;
 	}
 
+	public function orderBy($data) {
+		if(!ArrayHelper::isAssoc($data)) {
+			die('Utiliza un array asociativo para el orderBy: ["id" => "asc"]');
+		}
+
+		foreach ($data as $column => $order) {
+			if($order != 'asc' && $order != 'desc') {
+				die('El tipo de ordenación debe ser "asc" o "desc"');
+			}
+
+			if($this->entityNameIsValid($column)) {
+				$realColumnName = $this->getRealColumn(new Column($column));
+				array_push($this->order, $realColumnName . ' ' . $order);
+			}
+
+		}
+		return $this;
+	}
+
+	private function getOrder() :string {
+		$sql = '';
+		if(sizeof($this->order) > 0) {
+			$sql .= ' ORDER BY ';
+			foreach ($this->order as $order) {
+				$sql .= $order;
+			}
+		}
+
+		return $sql;
+	}
+
 	public function getSql(): string {
-		return $this->generateSelect() . $this->generateFrom() . $this->getLimit();
+		return $this->generateSelect() . $this->generateFrom() .
+		$this->getOrder() . $this->getLimit();
 	}
 
 }
