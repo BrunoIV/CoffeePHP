@@ -89,21 +89,27 @@ class SelectQuery extends \Core\Query\CommonQuery {
 	}
 
 	public function orderBy($data) {
-		if(!ArrayHelper::isAssoc($data)) {
-			die('Utiliza un array asociativo para el orderBy: ["id" => "asc"]');
+		if(!ArrayHelper::isAssoc($data) && !is_string($data)) {
+			die('Utiliza un array asociativo para el orderBy: ["id" => "asc"] o un string');
 		}
 
-		foreach ($data as $column => $order) {
-			if($order != 'asc' && $order != 'desc') {
-				die('El tipo de ordenación debe ser "asc" o "desc"');
-			}
+		if(is_string($data)) {
+			$realColumnName = $this->getRealColumn(new Column($data));
+			array_push($this->order, $realColumnName . ' ASC');
+		} else {
+			foreach ($data as $column => $order) {
+				$order = strtoupper($order);
+				if($order != 'ASC' && $order != 'DESC') {
+					die('El tipo de ordenación debe ser "asc" o "desc"');
+				}
 
-			if($this->entityNameIsValid($column)) {
-				$realColumnName = $this->getRealColumn(new Column($column));
-				array_push($this->order, $realColumnName . ' ' . $order);
+				if($this->entityNameIsValid($column)) {
+					$realColumnName = $this->getRealColumn(new Column($column));
+					array_push($this->order, $realColumnName . ' ' . $order);
+				}
 			}
-
 		}
+
 		return $this;
 	}
 
