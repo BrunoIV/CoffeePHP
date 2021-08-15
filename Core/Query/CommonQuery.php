@@ -195,16 +195,10 @@ class CommonQuery {
 	 * @return string
 	 */
 	protected function generateColumns(bool $noTableAlias = false) {
-		$select = '';
-
-		foreach ($this->columns as $column) {
-			$select .= $column->toString() . ', ';
-		}
-
-		//Elimina el último ', '
-		$select = substr($select, 0, -2);
-
-		return $select;
+		$cols = array_map(function($col) {
+			return $col->toString();
+		}, $this->columns);
+		return implode(', ', $col);
 	}
 
 	/**
