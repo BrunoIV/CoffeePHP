@@ -35,9 +35,9 @@ class CommonQuery {
      * @return string
      */
     protected function getRealTable(string $classOrAlias) {
-        $c = $this->usedTables[$classOrAlias];
-        $c = $this->generateEntityName($c);
-        return $c::TABLE;
+        $entity = $this->usedTables[$classOrAlias];
+        $entity = $this->generateEntityName($entity);
+        return $entity::TABLE;
     }
 
 	/**
@@ -198,44 +198,7 @@ class CommonQuery {
 		$select = '';
 
 		foreach ($this->columns as $column) {
-
-			//Si la columna no es literal -> '"verde"'
-			if (!$column->isLiteral()) {
-
-				//Obtiene el nombre real de la columna (o falla si no existe)
-				$realColumnName = $this->getRealColumn($column);
-
-				//Si tiene alias se agrega
-				if (!empty($column->getAlias())) {
-					$realColumnName .= ' AS ' . $column->getAlias();
-				}
-
-				//si no se conoce la tabla
-				if ($column->getIdTable() == '') {
-					$column->setIdTable($this->getTableOfColumn($column->getName()));
-				} else {
-					$column->setIdTable($column->getIdTable());
-				}
-
-				$col = '';
-
-				//Concatena ID/Alias de la tabla al nombre de la columna en BBDD
-				if ($noTableAlias === false) {
-					$col .= $column->getIdTable() . '.';
-				}
-				$col .= $realColumnName;
-
-				if (!empty($column->getFunction())) {
-					$col = $column->getFunction() . '(' . $col . ')';
-				}
-
-			} else { //fin isLiteral
-				$col = $column->getNameWithAlias();
-			}
-
-			if ($col != '') {
-				$select .= $col . ', ';
-			}
+			$select .= $column->toString() . ', ';
 		}
 
 		//Elimina el último ', '
