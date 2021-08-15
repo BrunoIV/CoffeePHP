@@ -184,13 +184,15 @@ class Column {
 		$sql = '';
 
 		if(!$this->isLiteral()) {
+			$idTable = ($this->getIdTable() != '' ? $this->getIdTable() . '.' : '');
+
 			if($this->getFunction() != null) {
-					$sql .= $this->getFunction() . '(' . $this->getName() . ')';
+					$sql .= $this->getFunction() . '(' . $idTable . $this->getName() . ')';
 			} else {
-				$sql .= $this->getName();
+				$sql .= $idTable . $this->getName();
 			}
 		} else {
-				$sql .= $this->getName();
+			$sql .= $this->getName();
 		}
 
 		if($this->getAlias() != '') {
