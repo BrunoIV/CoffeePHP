@@ -14,6 +14,7 @@ class Entity {
      */
     public function __construct($data) {
         $this->map = $this->getMap();
+		$this->fill($data);
     }
 
     /**
@@ -29,7 +30,7 @@ class Entity {
     }
 
     protected function setAttribute(string $attribute, $value) {
-		$map = $this->map($attribute);
+		$map = $this->mapAttribute($attribute);
 		$method = 'set' . ucfirst($map);
 
         if (!empty($map)) {
@@ -86,8 +87,7 @@ class Entity {
      * @return string
      */
     public function mapAttribute(string $atribute): string {
-        $map = array_flip($this->getMap());
-
+        $map = $this->getMap();
         if (!empty($map{$atribute})) {
             return $map{$atribute};
         }
