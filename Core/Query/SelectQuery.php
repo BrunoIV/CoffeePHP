@@ -125,9 +125,15 @@ class SelectQuery extends \Core\Query\CommonQuery {
 		return $sql;
 	}
 
-	public function getSql(): string {
+	private function getSql(): string {
 		return $this->generateSelect() . $this->generateFrom() .
 		$this->getOrder() . $this->getLimit();
+	}
+
+	public function execute() {
+		$sql = $this->getSql();
+		$db = new \Core\Database();
+		return $db->executeFetchClass($sql, array(), '\\App\\Dao\\Entity\\' . key($this->from) . 'Entity');
 	}
 
 }
