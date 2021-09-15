@@ -47,4 +47,15 @@ class Database {
 		return $stmt->fetchAll();
 	}
 
+	public function executeFetchClass(string $query, array $params = array(), string $class = "stdClass") {
+		$stmt = $this->dbh->prepare($query);
+
+		foreach ($params as $key => &$val) {
+			$stmt->bindParam($key, $val, PDO::PARAM_STR);
+		}
+
+		$stmt->execute();
+		return $stmt->fetchAll(PDO::FETCH_CLASS, $class);
+	}
+
 }
