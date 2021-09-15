@@ -8,19 +8,21 @@ use Core\Query\Entity;
  */
 class ProductEntity extends Entity {
 
-    const PK = 'ID';
-    const TABLE = 'PRODUCTOS';
+    const PK = 'PRO_ID';
+    const TABLE = 'PRO_PRODUCTOS';
     const JOINS = array(
         //'Entidad' => '{{ALIAS_ORI}}.ID = {{ALIAS_DEST}}.ID_PROD'
     );
 
     private $map = array(
-        'ID' => 'id',
-        'NOMBRE_PRODUCTO' => 'nombre'
+        'PRO_ID' => 'id',
+        'PRO_NOMBRE' => 'nombre',
+        'PRO_ACTIVO' => 'activo'
     );
 
     protected $id;
     protected $nombre;
+    protected $activo;
 
     public function __construct($data = array()) {
         parent::__construct($data);
@@ -38,11 +40,19 @@ class ProductEntity extends Entity {
         return $this->nombre;
     }
 
+    public function getActivo() {
+        return $this->activo;
+    }
+
     public function setId($id) {
         $this->id = $id;
     }
 
     public function setNombre($nombre) {
         $this->nombre = $nombre;
+    }
+
+    public function setActivo($activo) {
+        $this->activo = $activo;
     }
 }
