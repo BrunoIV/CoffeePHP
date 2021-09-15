@@ -15,10 +15,16 @@
 
     protected function _html() {
       ?>
-      <h1>Productos</h1>
-      <?php
-      foreach ($this->products as $product) {
-        echo $product . '<br>';
-      }
+	  <h1>Productos</h1>
+
+	  <table border="1">
+		  <?php foreach ($this->products as $product) { ?>
+		  <tr>
+			  <td><?= $product->getId(); ?></td>
+			  <td><?= $product->getNombre(); ?></td>
+		  </tr>
+		  <?php } ?>
+		</table>
+	  <?php
     }
   }

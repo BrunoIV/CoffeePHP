@@ -10,10 +10,7 @@ class ProductsDao extends Dao {
 	*/
 	public function getAllProducts() {
 		$qb = new \Core\Query\QueryBuilder();
-		$sql = $qb->select()->from(['Product' => 'p'])->execute();
-		var_dump($sql);
-
-		return ['iPhone', 'iPod', 'iMac'];
+		return $qb->select()->from(['Product' => 'p'])->execute();
 	}
 
 }
