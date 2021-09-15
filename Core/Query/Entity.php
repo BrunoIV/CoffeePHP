@@ -31,12 +31,12 @@ class Entity {
 
     protected function setAttribute(string $attribute, $value) {
 		$map = $this->mapAttribute($attribute);
-		$method = 'set' . ucfirst($map);
 
         if (!empty($map)) {
+			$method = 'set' . ucfirst($map);
 
             if (method_exists($this, $method)) {
-                $this->{$method}($value);
+			    $this->{$method}($value);
             } else {
                 $this->{$map} = $value;
             }
@@ -83,13 +83,13 @@ class Entity {
     /**
      * Mapea un atributo con una columna de la BBDD. Si no existe un mapeo usa
      * el nombre del atributo
-     * @param string $atribute
+     * @param string $attribute
      * @return string
      */
-    public function mapAttribute(string $atribute): string {
+    public function mapAttribute(string $attribute): string {
         $map = $this->getMap();
-        if (!empty($map[$atribute])) {
-            return $map[$atribute];
+        if (!empty($map[$attribute])) {
+            return $map[$attribute];
         }
 
         return '';
