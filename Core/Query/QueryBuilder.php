@@ -10,9 +10,9 @@ class QueryBuilder {
 	 * @param array $columns
 	 * @return SelectQuery
 	 */
-	public function select(array $columns): SelectQuery {
+	public function select(array $columns = array()): SelectQuery {
 		return new SelectQuery($columns);
 	}
 
-	
+
 }
