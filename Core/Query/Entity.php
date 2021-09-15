@@ -88,8 +88,8 @@ class Entity {
      */
     public function mapAttribute(string $atribute): string {
         $map = $this->getMap();
-        if (!empty($map{$atribute})) {
-            return $map{$atribute};
+        if (!empty($map[$atribute])) {
+            return $map[$atribute];
         }
 
         return '';
