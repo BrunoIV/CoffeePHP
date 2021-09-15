@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Dao;
+namespace App\Dao\Daos;
 use Core\Dao;
 
 class Daos {
