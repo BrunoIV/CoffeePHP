@@ -159,14 +159,13 @@ class CommonQuery {
 					die('El atributo "' . $column->getName() . '" se encuentra en varias entidades de tu consulta. Por favor, especifica el alias de la columna. Ejemplo: "productos.' . $column->getName() . '" en lugar de "'.$column->getName().'"');
 				}
 
-                $realColumnName = $entity->mapAttribute($column->getName());
+                $realColumnName = $entity->mapAttributeIntoColumn($column->getName());
             }
         } else {
 			//Obtiene el nombre de la entidad (y la contruye) a partir del alias
             $entityName = $this->getEntityNameFromTheAlias($column->getIdTable());
             $entity = $this->createEntity($entityName);
-
-            $realColumnName = $entity->mapAttribute($column->getName());
+            $realColumnName = $entity->mapAttributeIntoColumn($column->getName());
         }
 
         if ($realColumnName != '') {
