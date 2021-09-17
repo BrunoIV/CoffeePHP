@@ -8,6 +8,7 @@ class SelectQuery extends \Core\Query\CommonQuery {
 
 	private $limit = 0;
 	private $order = [];
+	private $restrictions;
 
 	/**
 	 * Selecciona los atributos que recibe como parámetro.
@@ -45,6 +46,11 @@ class SelectQuery extends \Core\Query\CommonQuery {
 		return $this;
 	}
 
+	public function where($restrictions) {
+		$this->restrictions = $restrictions;
+		return $this;
+	}
+
 	/**
 	 * Establece el nº de resultados máximo que va a retornar la consulta
 	 * @param int $limit
@@ -74,6 +80,42 @@ class SelectQuery extends \Core\Query\CommonQuery {
 	 */
 	private function generateFrom() {
 		return ' FROM ' . $this->getTableWithAlias($this->from);
+	}
+
+
+	private function restrictionToSql($restriction) {
+		$column = new Column($this->from[key($this->from)] . '.' . $restriction->getColumn());
+		$alias = $this->getRealColumn($column);
+		return $alias . ' ' . $restriction::SYMBOL . ' ' . $restriction->getComparation();
+	}
+
+	private function loopRestrictions($restrictions, $type) {
+		$sql = '';
+
+		$len = count($restrictions->getRestrictions());
+		$i = 0;
+		foreach ($restrictions->getRestrictions() as $res) {
+			if($res instanceof \Core\Query\Restrictions\AndOrRestriction) {
+				$sql.= '(' . $this->loopRestrictions($res, $res->getType()) . ')';
+			} else {
+				$sql .= $this->restrictionToSql($res) . ($i < ($len - 1) ? ' '.$type.' ' : '');
+			}
+			$i++;
+		}
+		return $sql;
+	}
+
+	private function generateWhere() {
+		$restrictions = $this->restrictions;
+
+		$sql = ' WHERE ';
+		if($restrictions instanceof \Core\Query\Restrictions\AndOrRestriction) {
+			$sql .= $this->loopRestrictions($restrictions, $restrictions->getType());
+		} else {
+			$sql  .= $this->restrictionToSql(restrictions);
+		}
+
+		return $sql;
 	}
 
 	/**
@@ -125,9 +167,9 @@ class SelectQuery extends \Core\Query\CommonQuery {
 		return $sql;
 	}
 
-	private function getSql(): string {
+	public function getSql(): string {
 		return $this->generateSelect() . $this->generateFrom() .
-		$this->getOrder() . $this->getLimit();
+		$this->generateWhere() . $this->getOrder() . $this->getLimit();
 	}
 
 	public function execute() {

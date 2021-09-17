@@ -30,7 +30,7 @@ class Entity {
     }
 
     protected function setAttribute(string $attribute, $value) {
-		$map = $this->mapAttribute($attribute);
+		$map = $this->mapColumnIntoAttribute($attribute);
 
         if (!empty($map)) {
 			$method = 'set' . ucfirst($map);
@@ -86,8 +86,19 @@ class Entity {
      * @param string $attribute
      * @return string
      */
-    public function mapAttribute(string $attribute): string {
+    public function mapColumnIntoAttribute(string $attribute): string {
         $map = $this->getMap();
+
+        if (!empty($map[$attribute])) {
+            return $map[$attribute];
+        }
+
+        return '';
+    }
+
+	public function mapAttributeIntoColumn(string $attribute): string {
+        $map = array_flip($this->getMap());
+
         if (!empty($map[$attribute])) {
             return $map[$attribute];
         }
