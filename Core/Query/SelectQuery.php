@@ -68,7 +68,7 @@ class SelectQuery extends \Core\Query\CommonQuery {
 		if (!empty($this->getColumns())) {
 			$select .= $this->generateColumns();
 		} else {
-			$select .= '* ';
+			$select .= '*';
 		}
 
 		return $select;
