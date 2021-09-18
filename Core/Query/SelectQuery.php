@@ -84,9 +84,26 @@ class SelectQuery extends \Core\Query\CommonQuery {
 
 
 	private function restrictionToSql($restriction) {
+
+		$sql = '';
+
 		$column = new Column($this->from[key($this->from)] . '.' . $restriction->getColumn());
 		$alias = $this->getRealColumn($column);
-		return $alias . ' ' . $restriction::SYMBOL . ' ' . $restriction->getComparation();
+		$sql = $alias . ' ' . $restriction->getType() . ' ';
+
+		if($restriction->getType() == 'IN') {
+			//Si es una subconsulta
+			if($restriction->getComparation() instanceof SelectQuery) {
+				$column = new Column($this->from[key($this->from)] . '.' . $restriction->getColumn());
+				$sql .= "(" . $restriction->getComparation()->getSql() . ")";
+			} else {
+				//Si es un array de valores
+				$sql .= "(" . implode(", ", $restriction->getComparation()) . ")";
+			}
+		} else {
+			$sql .= $restriction->getComparation();
+		}
+		return $sql;
 	}
 
 	private function loopRestrictions($restrictions, $type) {
@@ -107,12 +124,15 @@ class SelectQuery extends \Core\Query\CommonQuery {
 
 	private function generateWhere() {
 		$restrictions = $this->restrictions;
+		$sql = '';
 
-		$sql = ' WHERE ';
-		if($restrictions instanceof \Core\Query\Restrictions\AndOrRestriction) {
-			$sql .= $this->loopRestrictions($restrictions, $restrictions->getType());
-		} else {
-			$sql  .= $this->restrictionToSql(restrictions);
+		if(!empty($restrictions)) {
+			$sql = ' WHERE ';
+			if($restrictions instanceof \Core\Query\Restrictions\AndOrRestriction) {
+				$sql .= $this->loopRestrictions($restrictions, $restrictions->getType());
+			} else {
+				$sql  .= $this->restrictionToSql(restrictions);
+			}
 		}
 
 		return $sql;

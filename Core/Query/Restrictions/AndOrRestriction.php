@@ -2,6 +2,7 @@
 namespace Core\Query\Restrictions;
 
 use \Core\Query\Restrictions\CompareRestriction;
+use \Core\Query\SelectQuery;
 
 /**
  * Permite crear restricciones para consultas SQL

@@ -158,7 +158,7 @@ class CommonQuery {
 				if($realColumnName != '') {
 					die('El atributo "' . $column->getName() . '" se encuentra en varias entidades de tu consulta. Por favor, especifica el alias de la columna. Ejemplo: "productos.' . $column->getName() . '" en lugar de "'.$column->getName().'"');
 				}
-
+				echo $column->getName()."<br>";
                 $realColumnName = $entity->mapAttributeIntoColumn($column->getName());
             }
         } else {
@@ -194,10 +194,13 @@ class CommonQuery {
 	 * @return string
 	 */
 	protected function generateColumns(bool $noTableAlias = false) {
-		$cols = array_map(function($col) {
-			return $col->toString();
-		}, $this->columns);
-		return implode(', ', $cols);
+		$columns = [];
+		foreach ($this->columns as $column) {
+			$realColumnName = $this->getRealColumn($column);
+			array_push($columns, $realColumnName);
+		}
+
+		return implode(', ', $columns);
 	}
 
 	/**
