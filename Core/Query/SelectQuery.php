@@ -131,7 +131,7 @@ class SelectQuery extends \Core\Query\CommonQuery {
 			if($restrictions instanceof \Core\Query\Restrictions\AndOrRestriction) {
 				$sql .= $this->loopRestrictions($restrictions, $restrictions->getType());
 			} else {
-				$sql  .= $this->restrictionToSql(restrictions);
+				$sql  .= $this->restrictionToSql($restrictions);
 			}
 		}
 
