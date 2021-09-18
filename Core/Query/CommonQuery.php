@@ -24,8 +24,7 @@ class CommonQuery {
 
         //A partir del nombre/alias de la entidad se obtiene el nombre real de la tabla
         $table = $this->getRealTable($idTable);
-
-        return $table . ' ' . $idTable;
+		return ($idTable == '' ? $table : $table . ' ' . $idTable);
     }
 
 
@@ -95,9 +94,9 @@ class CommonQuery {
     protected function getAlias($data) {
         if (is_array($data)) {
             return $data[key($data)];
-        } else {
-            return $data;
         }
+
+        return '';
     }
 
     /**
@@ -158,7 +157,6 @@ class CommonQuery {
 				if($realColumnName != '') {
 					die('El atributo "' . $column->getName() . '" se encuentra en varias entidades de tu consulta. Por favor, especifica el alias de la columna. Ejemplo: "productos.' . $column->getName() . '" en lugar de "'.$column->getName().'"');
 				}
-				echo $column->getName()."<br>";
                 $realColumnName = $entity->mapAttributeIntoColumn($column->getName());
             }
         } else {
