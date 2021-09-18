@@ -150,24 +150,36 @@ class SelectQuery extends \Core\Query\CommonQuery {
 		return $limit;
 	}
 
+	/**
+	 * Transforma el nombre del atributo al nombre de la columna y lo agrega a la lista
+	 * de orders
+	 * @param $attribute - Nombre del atributo de la entidad
+	 * @param $order - asc, desc o '' (opcional)
+	 */
+	private function addOrder(string $attribute, string $order = '') {
+		$realColumnName = $this->getRealColumn(new Column($attribute));
+		array_push($this->order, $realColumnName . ($order != '' ? ' ' . strtoupper($order) : ''));
+	}
+
 	public function orderBy($data) {
 		if(!ArrayHelper::isAssoc($data) && !is_string($data)) {
 			die('Utiliza un array asociativo para el orderBy: ["id" => "asc"] o un string');
 		}
 
 		if(is_string($data)) {
-			$realColumnName = $this->getRealColumn(new Column($data));
-			array_push($this->order, $realColumnName . ' ASC');
+			$this->addOrder($data);
 		} else {
 			foreach ($data as $column => $order) {
-				$order = strtoupper($order);
-				if($order != 'ASC' && $order != 'DESC') {
+
+				if(strtoupper($order) != 'ASC' && strtoupper($order) != 'DESC' && $column != '') {
 					die('El tipo de ordenación debe ser "asc" o "desc"');
 				}
 
-				if($this->entityNameIsValid($column)) {
-					$realColumnName = $this->getRealColumn(new Column($column));
-					array_push($this->order, $realColumnName . ' ' . $order);
+				//Si en lugar de un array ['id'=>'asc'] pasas un string ['id'] $orden para a ser la columna
+				if($column == '') {
+					$this->addOrder($order);
+				} else {
+					$this->addOrder($column, $order);
 				}
 			}
 		}
@@ -177,10 +189,15 @@ class SelectQuery extends \Core\Query\CommonQuery {
 
 	private function getOrder() :string {
 		$sql = '';
-		if(sizeof($this->order) > 0) {
+
+		$size = sizeof($this->order);
+		if($size > 0) {
 			$sql .= ' ORDER BY ';
-			foreach ($this->order as $order) {
-				$sql .= $order;
+			for($i = 0; $i < $size; $i++) {
+				$sql .= $this->order[$i];
+				if($i < $size -1 ) {
+					$sql .= ", ";
+				}
 			}
 		}
 
