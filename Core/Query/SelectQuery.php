@@ -82,6 +82,16 @@ class SelectQuery extends \Core\Query\CommonQuery {
 		return ' FROM ' . $this->getTableWithAlias($this->from);
 	}
 
+	/**
+	 * Agrega comillas simples si lo que recibe es un string
+	 */
+	private function addQuotes($value) {
+		if(is_string($value)) {
+			return "'" . $value . "'";
+		}
+
+		return $value;
+	}
 
 	private function restrictionToSql($restriction) {
 
@@ -97,11 +107,21 @@ class SelectQuery extends \Core\Query\CommonQuery {
 				$column = new Column($this->from[key($this->from)] . '.' . $restriction->getColumn());
 				$sql .= "(" . $restriction->getComparation()->getSql() . ")";
 			} else {
-				//Si es un array de valores
-				$sql .= "(" . implode(", ", $restriction->getComparation()) . ")";
+				$sql .= "(";
+				$size =  sizeof($restriction->getComparation());
+				for($i = 0; $i < $size; $i++) {
+					$comparation = $restriction->getComparation()[$i];
+
+					$sql .= $this->addQuotes($comparation);
+					if($i < ($size - 1)) {
+						$sql .= ", ";
+					}
+
+				}
+				$sql .= ")";
 			}
 		} else {
-			$sql .= $restriction->getComparation();
+			$sql .= $this->addQuotes($restriction->getComparation());
 		}
 		return $sql;
 	}
@@ -113,7 +133,7 @@ class SelectQuery extends \Core\Query\CommonQuery {
 		$i = 0;
 		foreach ($restrictions->getRestrictions() as $res) {
 			if($res instanceof \Core\Query\Restrictions\AndOrRestriction) {
-				$sql.= '(' . $this->loopRestrictions($res, $res->getType()) . ')';
+				$sql.= '(' . $this->loopRestrictions($res, $res->getType()) . ') ' . $type . ' ';
 			} else {
 				$sql .= $this->restrictionToSql($res) . ($i < ($len - 1) ? ' '.$type.' ' : '');
 			}
