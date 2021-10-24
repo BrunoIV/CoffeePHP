@@ -9,6 +9,7 @@ class SelectQuery extends \Core\Query\CommonQuery {
 	private $limit = 0;
 	private $order = [];
 	private $restrictions;
+	private $unions = [];
 
 	/**
 	 * Selecciona los atributos que recibe como parámetro.
@@ -216,7 +217,7 @@ class SelectQuery extends \Core\Query\CommonQuery {
 			for($i = 0; $i < $size; $i++) {
 				$sql .= $this->order[$i];
 				if($i < $size -1 ) {
-					$sql .= ", ";
+					$sql .= ', ';
 				}
 			}
 		}
@@ -224,9 +225,28 @@ class SelectQuery extends \Core\Query\CommonQuery {
 		return $sql;
 	}
 
+	public function union(SelectQuery $query) {
+		$columnCount = count($this->getColumns());
+		$columnCountAlias = count($query->getColumns());
+		if($columnCount !== $columnCountAlias) {
+			throw new \Exception('Las sentencias SELECT usadas tienen un diferente número de columnas');
+		}
+
+		array_push($this->unions, $query);
+		return $this;
+	}
+
+	private function generateUnion() {
+		$sql = '';
+		foreach ($this->unions as $union) {
+			$sql .= ' UNION ' . $union->getSql();
+		}
+		return $sql;
+	}
+
 	public function getSql(): string {
 		return $this->generateSelect() . $this->generateFrom() .
-		$this->generateWhere() . $this->getOrder() . $this->getLimit();
+		$this->generateWhere() . $this->getOrder() . $this->getLimit() . $this->generateUnion();
 	}
 
 	public function execute() {

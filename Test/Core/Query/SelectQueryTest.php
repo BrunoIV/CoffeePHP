@@ -166,4 +166,15 @@ final class SelectQueryTest extends TestCase {
         );
     }
 
+	public function testUnion(): void {
+        $qb = new \Core\Query\QueryBuilder();
+		$union = $qb->select(['nombre'])->from(['Product' => 'p2']);
+		$query = $qb->select(['id'])->from(['Product' => 'p1'])->union($union);
+
+		$this->assertEquals(
+			'SELECT PRO_ID FROM PRO_PRODUCTOS p1 UNION SELECT PRO_NOMBRE FROM PRO_PRODUCTOS p2',
+			$query->getSql()
+		);
+    }
+
 }
