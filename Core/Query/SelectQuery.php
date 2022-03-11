@@ -8,7 +8,7 @@ class SelectQuery extends \Core\Query\CommonQuery {
 
 	private $limit = 0;
 	private $order = [];
-	private $restrictions;
+	protected $restrictions;
 	private $unions = [];
 
 	/**
@@ -83,81 +83,6 @@ class SelectQuery extends \Core\Query\CommonQuery {
 		return ' FROM ' . $this->getTableWithAlias($this->from);
 	}
 
-	/**
-	 * Agrega comillas simples si lo que recibe es un string
-	 */
-	private function addQuotes($value) {
-		if(is_string($value)) {
-			return "'" . $value . "'";
-		}
-
-		return $value;
-	}
-
-	private function restrictionToSql($restriction) {
-
-		$sql = '';
-
-		$column = new Column($this->from[key($this->from)] . '.' . $restriction->getColumn());
-		$alias = $this->getRealColumn($column);
-		$sql = $alias . ' ' . $restriction->getType() . ' ';
-
-		if($restriction->getType() == 'IN') {
-			//Si es una subconsulta
-			if($restriction->getComparation() instanceof SelectQuery) {
-				$column = new Column($this->from[key($this->from)] . '.' . $restriction->getColumn());
-				$sql .= "(" . $restriction->getComparation()->getSql() . ")";
-			} else {
-				$sql .= "(";
-				$size =  sizeof($restriction->getComparation());
-				for($i = 0; $i < $size; $i++) {
-					$comparation = $restriction->getComparation()[$i];
-
-					$sql .= $this->addQuotes($comparation);
-					if($i < ($size - 1)) {
-						$sql .= ", ";
-					}
-
-				}
-				$sql .= ")";
-			}
-		} else {
-			$sql .= $this->addQuotes($restriction->getComparation());
-		}
-		return $sql;
-	}
-
-	private function loopRestrictions($restrictions, $type) {
-		$sql = '';
-
-		$len = count($restrictions->getRestrictions());
-		$i = 0;
-		foreach ($restrictions->getRestrictions() as $res) {
-			if($res instanceof \Core\Query\Restrictions\AndOrRestriction) {
-				$sql.= '(' . $this->loopRestrictions($res, $res->getType()) . ') ' . $type . ' ';
-			} else {
-				$sql .= $this->restrictionToSql($res) . ($i < ($len - 1) ? ' '.$type.' ' : '');
-			}
-			$i++;
-		}
-		return $sql;
-	}
-
-	private function generateWhere() {
-		$restrictions = $this->restrictions;
-		$sql = '';
-
-		if(!empty($restrictions)) {
-			$sql = ' WHERE ';
-			if($restrictions instanceof \Core\Query\Restrictions\AndOrRestriction) {
-				$sql .= $this->loopRestrictions($restrictions, $restrictions->getType());
-			} else {
-				$sql  .= $this->restrictionToSql($restrictions);
-			}
-		}
-
-		return $sql;
-	}
 
 	/**
 	 * Genera la claúsula LIMIT de la consulta
