@@ -58,7 +58,10 @@ class CommonQuery {
 				} else {
                     array_push($this->columns, new Column($name, $alias));
                 }
-            } else {
+            } else if(is_subclass_of($column, 'Core\Query\Functions\SqlFunction')){
+				//Las funciones SQL se agregan tal cual, el propio objeto incluye un toSql()
+				array_push($this->columns, $column);
+			} else {
                 array_push($this->columns, new Column($column));
             }
         }
@@ -146,6 +149,7 @@ class CommonQuery {
     protected function getRealColumn(Column $column) {
         $realColumnName = '';
 
+
         //Si la columna tiene el id/alias de la tabla -> usuarios.id
         if (empty($column->getIdTable())) {
 
@@ -194,8 +198,14 @@ class CommonQuery {
 	protected function generateColumns(bool $noTableAlias = false) {
 		$columns = [];
 		foreach ($this->columns as $column) {
-			$realColumnName = $this->getRealColumn($column);
-			array_push($columns, $realColumnName);
+
+			if(is_subclass_of($column, 'Core\Query\Functions\SqlFunction')){
+				array_push($columns, $column->toSql());
+			} else {
+				$realColumnName = $this->getRealColumn($column);
+				array_push($columns, $realColumnName);
+			}
+
 		}
 
 		return implode(', ', $columns);
