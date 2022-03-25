@@ -45,12 +45,12 @@ class CommonQuery {
 	protected function addArrayColumns(array $columns) {
 
 		//Las columnas son un array, que dentro pueden contener strings o arrays asocativos
-        foreach ($columns as $col) {
+        foreach ($columns as $column) {
 
             //Si el array es anonimo el alias es el nombre de la columna
-            if (ArrayHelper::isAssoc($col)) {
-				$name = key($col);
-				$alias = $col[$name];
+            if (ArrayHelper::isAssoc($column)) {
+				$name = key($column);
+				$alias = $column[$name];
 
                 //Si usas func() retorna una columna directamente
                 if ($alias instanceof Column) {
@@ -59,7 +59,7 @@ class CommonQuery {
                     array_push($this->columns, new Column($name, $alias));
                 }
             } else {
-                array_push($this->columns, new Column($col));
+                array_push($this->columns, new Column($column));
             }
         }
     }
