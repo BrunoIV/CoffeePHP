@@ -68,7 +68,7 @@ abstract class Config {
 		$this->driver = $driver;
 	}
 
-	public function getDriver($driver) :string {
+	public function getDriver() :string {
 		return $this->driver;
 	}
 }
