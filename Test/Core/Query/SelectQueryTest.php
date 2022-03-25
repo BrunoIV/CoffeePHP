@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 Use \Core\Query\Restrictions\Restrictions;
+Use \Core\Query\Functions\Functions;
 
 final class SelectQueryTest extends TestCase {
 
@@ -176,5 +177,15 @@ final class SelectQueryTest extends TestCase {
 			$query->getSql()
 		);
     }
+
+	public function testFunction() {
+		$qb = new \Core\Query\QueryBuilder();
+		$query = $qb->select(['id', 'nombre', Functions::currentDate()])->from(['Product' => 'prods']);
+
+		$this->assertEquals(
+			'SELECT PRO_ID, PRO_NOMBRE, SYSDATE() FROM PRO_PRODUCTOS prods',
+			$query->getSql()
+		);
+	}
 
 }
