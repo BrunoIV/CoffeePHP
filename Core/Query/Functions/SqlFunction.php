@@ -1,13 +1,14 @@
 <?php
+namespace Core\Query\Functions;
 use \Core\Config\ConfigFactory;
 
 class SqlFunction {
 	private $cfg;
-	public __construct() {
+	public function __construct() {
 		$this->cfg = ConfigFactory::getConfig();
 	}
 
-	public getConfig() {
+	public function getConfig() {
 		return $this->cfg;
 	}
 

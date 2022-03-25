@@ -1,4 +1,5 @@
 <?php
+namespace Core\Query\Functions;
 use \Core\Config\ConfigFactory;
 
 class LengthFunction extends SqlFunction {
