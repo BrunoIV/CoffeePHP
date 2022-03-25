@@ -9,6 +9,7 @@ abstract class Config {
 	private $databasePassword;
 	private $databaseName;
 	private $databaseHost;
+	private $driver;
 
 	//Paths
 	private $cssUrl = APP_URL . 'public' . DS . 'css' . DS;
@@ -61,5 +62,13 @@ abstract class Config {
 
 	public function getJsUrl() :string {
 		return $this->jsUrl;
+	}
+
+	private function setDriver(string $driver) {
+		$this->driver = $driver;
+	}
+
+	private function getDriver($driver) :string {
+		return $this->driver;
 	}
 }

@@ -11,5 +11,6 @@ class ConfigProduction extends \Core\Config\Config {
 		$this->setDatabaseHost('localhost');
 		$this->setDatabaseUser('root');
 		$this->setDatabasePassword('passwd-prod');
+		$this->setDriver('mysql');
 	}
 }

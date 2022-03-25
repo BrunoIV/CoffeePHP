@@ -11,5 +11,6 @@ class ConfigLocal extends \Core\Config\Config {
 		$this->setDatabaseHost('localhost');
 		$this->setDatabaseUser('root');
 		$this->setDatabasePassword('passwd');
+		$this->setDriver('mysql');
 	}
 }
