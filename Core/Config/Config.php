@@ -13,8 +13,8 @@ abstract class Config {
 
 	//Paths
 	private $cssUrl = APP_URL . 'public' . DS . 'css' . DS;
-	private $jsUrl =	APP_URL . 'public' . DS . 'js' . DS;
-	private $imgUrl =	APP_URL . 'public' . DS . 'images' . DS;
+	private $jsUrl = APP_URL . 'public' . DS . 'js' . DS;
+	private $imgUrl = APP_URL . 'public' . DS . 'images' . DS;
 
 
 	public function setDatabaseName(string $databaseName) {
@@ -64,11 +64,11 @@ abstract class Config {
 		return $this->jsUrl;
 	}
 
-	private function setDriver(string $driver) {
+	public function setDriver(string $driver) {
 		$this->driver = $driver;
 	}
 
-	private function getDriver($driver) :string {
+	public function getDriver($driver) :string {
 		return $this->driver;
 	}
 }
